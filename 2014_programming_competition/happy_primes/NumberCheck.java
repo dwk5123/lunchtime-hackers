@@ -7,7 +7,7 @@ public class NumberCheck {
 		int low = scanner.nextInt();
 		int high = scanner.nextInt();
 		
-		boolean results = new boolean[high - low];
+		boolean[] results = new boolean[high - low];
 		for (int i = 0; i < results.length; i++) {
 			results[i] = true;
 		}
@@ -15,28 +15,36 @@ public class NumberCheck {
 		//Calculate with Sieve of Eratosthenes
 		for (int i = 2; i < Math.sqrt(high); i++) {
 			for (int j = 0; j < results.length; j++) {
-				if ((j+low) % i == 0) {
+				int num = j+low;
+				if (num % i == 0 &&
+					num != 2 &&
+					num != 3 &&
+					num != 5 &&
+					num != 7) {
+					
+					
+					
 					//If they're evenly divisible, they don't be prime
 					results[j] = false;
 				}
 			}
 		}		
 		
-		for (int i = 0; i < results.length; i++) {
+		for (int i = 1; i < results.length; i++) {
 			int num = i + low;
 			boolean happy = isHappy(num);
 			boolean prime = results[i];
 			String output = "";
 			if (happy && prime) {
-				output = " happy and prime."
+				output = " happy and prime";
 			} else if (happy) {
-				output = " happy and nonprime.";
+				output = " happy and nonprime";
 			} else if (prime) {
-				output = " sad and prime."
+				output = " sad and prime";
 			} else {
-				output = " sad and nonprime.";
+				output = " sad and nonprime";
 			}
-			System.out.println(num + " is " + output);
+			System.out.println(num + " is" + output);
 		}
 		
 		/*long startTime = System.currentTimeMillis();

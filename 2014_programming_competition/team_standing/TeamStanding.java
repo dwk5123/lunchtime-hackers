@@ -9,7 +9,8 @@ public class TeamStanding
 	static ArrayList<Team> teams = new ArrayList<Team>();
 	public static void main(String[] args) 
 	{
-		Scanner scan = null;
+		Scanner scan = new Scanner(System.in);
+		/*
 		try 
 		{
 			scan = new Scanner(new File("competitionData.txt"));
@@ -18,6 +19,7 @@ public class TeamStanding
 		{
 			System.out.println("Cannot Find Input File");
 		}
+		*/
 		
 		int numCases = scan.nextInt();
 		

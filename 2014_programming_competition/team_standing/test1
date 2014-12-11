@@ -1,0 +1,46 @@
+22
+Ravens 16 Bengals 23
+Steelers 6 Ravens 26
+Browns 21 Ravens 23
+Steelers 30 Browns 27
+Colts 34 Steelers 51
+Bengals 0 Colts 27
+Texans 28 Colts 33
+Steelers 30 Texans 23
+Titans 7 Bengals 33
+Titans 17 Colts 41
+Browns 29 Titans 28
+Texans 30 Titans 16
+Jaguars 17 Colts 44
+Jaguars 9 Steelers 17
+Titans 16 Jaguars 14
+Patriots 43 Bengals 17
+teamA 2 teamB 1
+teamB 2 teamC 1
+teamC 2 teamD 1
+teamD 2 teamA 1
+teamE 2 teamF 1
+teamF 2 teamG 1
+22
+teamE teamG
+teamG teamE
+teamA teamB
+teamB teamA
+teamE teamA
+teamA teamE
+teamA teamC
+teamC teamA
+teamB teamD
+teamD teamB
+teamA teamA
+Titans Ravens
+Browns Bengals
+Jaguars Steelers
+Steelers Patriots
+Browns Ravens
+Colts Ravens
+Colts Browns
+Browns Colts
+Steelers Steelers
+Steelers Colts
+Browns Jaguars
