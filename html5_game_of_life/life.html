@@ -1,0 +1,180 @@
+<html>
+	<head>
+		<script type="text/javascript">
+			//Constructor - create pre-loaded board
+			function Board(rows, columns) {
+				this.rows = rows;
+				this.columns = columns;
+				this.cells = new Array(columns);
+				for (i = 0; i < columns; i++)  {
+					this.cells[i] = new Array(rows);
+					for (j = 0; j < rows; j++) {
+						this.cells[i][j] = 0; //dead cell initially
+						if ((i+j) % 2 == 0)
+							this.cells[i][j] = 1;
+					}
+				}
+			}
+
+			var life;
+
+			//Constructor
+			function Life(rows, columns, height, width, ctx, canvas) {
+				this.board = new Board(rows, columns);
+				this.cellHeight = height;
+				this.cellWidth = width;
+				this.step = stepForward;
+				this.draw = drawGame;
+				this.canvas_elem = canvas;
+				this.canvas = ctx;
+				canvas.removeEventListener('click', clickHandler);
+				canvas.addEventListener('click', clickHandler);
+			}
+
+			//If a click occurs on the board, attempt to toggle the cell the user clicked on
+			function clickHandler(event) {
+				var rect = b_canvas.getBoundingClientRect();
+				console.log(rect.left + " " + rect.top);
+				x = Math.floor((event.pageX - rect.left) / game.cellHeight);
+				y = Math.floor((event.pageY - rect.top) / game.cellWidth)
+				if (x < game.board.cells.length && y < game.board.cells[x].length) {
+					game.board.cells[x][y] = (game.board.cells[x][y] == 1) ? 0 : 1;
+				}
+			}
+
+
+			function stepForward() {
+				board = game.board;
+				nextBoard = new Board(board.rows, board.columns);
+				for(i = 0; i < board.rows; i++) {
+					for(j = 0; j < board.columns; j++) {
+						// Life/Death Logic
+						c = cellsAround(board, i , j);
+						if (c == 3) {
+							nextBoard.cells[i][j] = 1; //Cell becomes "Alive"
+							//Redraw
+						} else if (c <= 1 || c >= 4) {
+							nextBoard.cells[i][j] = 0; //Cell becomes smothered and "Dies"
+							//Redraw
+						} else {
+							nextBoard.cells[i][j] = board.cells[i][j]; //No state change
+						}
+					}
+				}
+				//Finally, update the game's model with the new model
+				game.board = nextBoard;
+			}
+
+			function drawGame() {
+				game.canvas.width = game.canvas.width;
+				rows = game.board.rows;
+				cols = game.board.columns;
+				for (i = 0; i < rows; i++) {
+					for (j = 0; j < cols; j++) {
+						//Draw cell
+						game.canvas.fillStyle = (game.board.cells[i][j] == 0) ? "#FFF" : "#000";
+						game.canvas.fillRect((i * game.cellHeight), (j * game.cellWidth), game.cellWidth-1, game.cellHeight-1);
+					}
+				}
+				for (i = 0; i < rows+1; i++) {
+					//draw row line & column line
+					game.canvas.strokeStyle = "#999";
+					game.canvas.beginPath();
+					game.canvas.moveTo(0, i * game.cellHeight);
+					game.canvas.lineTo(game.cellWidth * game.board.rows, i * game.cellHeight);
+					game.canvas.stroke();
+					game.canvas.beginPath();
+					game.canvas.moveTo(i * game.cellWidth, 0);
+					game.canvas.lineTo(i * game.cellWidth, game.cellHeight * game.board.columns);
+					game.canvas.stroke();
+				}
+				frames++;
+			}
+			
+			var frames = 0;
+			var framerate = 0;
+
+			function displayFramerate() {
+				//use simple "Smoothing"
+				framerate = (frames + framerate) / 2;
+				frames = 0;
+				document.getElementById('framerate').innerHTML = framerate;
+			}
+			
+			//Including diagonal
+			function cellsAround(board, x, y) {
+				var result = 0;
+				if (x >= 1) {
+					if (y >= 1) {
+						result += board.cells[x-1][y-1];
+					}
+					if (y < board.cells.length-1) {
+						result += board.cells[x-1][y+1];
+					}
+					result += board.cells[x-1][y];
+				}
+				if (x < board.cells.length-1) {
+					if (y < board.cells[x].length-1) {
+						result += board.cells[x+1][y+1];
+					}
+					if (y >= 1) {
+						result += board.cells[x+1][y-1];
+					}
+					result += board.cells[x+1][y];
+				}
+				if (y >= 1) {
+					result += board.cells[x][y-1];
+				}
+				if (y < board.cells[x].length-1) {
+					result += board.cells[x][y+1];
+				}
+				return result;
+			}
+
+
+		</script>
+	</head>
+	<body>
+		<canvas height="480" width="640" id='c12'></canvas>
+		<script type="text/javascript">
+			var game;
+			
+			//Create canvas & drawable context
+			var b_canvas = document.getElementById("c12");
+  			var b_context = b_canvas.getContext("2d");
+  
+			function createGame(a, b, c, d) {
+				game = new Life(a, b, c, d, b_context, b_canvas);
+				//Clear canvas
+				b_context.fillStyle = "#fff";
+				b_context.fillRect(0, 0, 640, 480);
+			}
+			
+			//Create a game with a 10x10 grid of 48x48 pixel cells
+			createGame(10, 10, 48, 48);
+			
+			//Use "asynchronous" methods for separating redrawing and updating logic
+			setInterval(game.draw, 33); //30 fps, approx
+			setInterval(displayFramerate, 1000); //update framerate every second
+			
+			//Allow the user to stop and restart the "autoplay" feature
+			var stepInterval;
+			function startAutoplay() {
+				document.getElementById("autoClick").value = "Stop Autoplay";
+				document.getElementById("autoClick").onclick = function() {
+						document.getElementById("autoClick").onclick = startAutoplay;
+						document.getElementById("autoClick").value="Start Autoplay";
+						clearInterval(stepInterval);
+					}
+				stepInterval = setInterval(game.step, 500);
+			}
+		</script>
+		<input type="button" onclick="game.step();" value="Step Forward" style="float: right"/>
+		<input type="button" onclick="createGame(10, 10, 48, 48);" value="Small" style="float: right"/>
+		<input type="button" onclick="createGame(20, 20, 25, 25);" value="Medium" style="float: right"/>
+		<input type="button" onclick="createGame(30, 30, 16, 16);" value="Large" style="float: right"/>
+		<input type="button" onclick="createGame(40, 40, 12, 12);" value="XLarge" style="float: right"/>
+		<input type="button" onclick="startAutoplay()" value="Start Autoplay" style="float:right" id="autoClick"/>
+		<div style="float: right" id="framerate"></div>
+	</body>
+</html>

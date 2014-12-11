@@ -1,0 +1,144 @@
+username:password
+deploy:deploy
+
+########
+# IPs: #
+########
+192.168.0.4		#9
+192.168.0.23	#8
+192.168.0.22	#7
+192.168.0.17	#6	
+192.168.0.15	#5
+192.168.0.13	#4
+192.168.0.12	#3
+192.168.0.9		#2
+192.168.0.7		#1
+192.168.0.6		#0
+
+#Install Ruby/RVM/Rails
+gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+\curl -SsL https://get.rvm.io | bash -s stable
+source ~/.rvm/scripts/rvm
+rvm requirements
+rvm install ruby
+rvm use ruby --default
+rvm rubygems current
+gem install rails
+
+#Install NGINX/Unicorn
+sudo apt-get install nginx
+gem install unicorn
+
+#STARTPOINT
+#Create new rails app
+cd ~
+mkdir apps
+cd apps
+rails new ursa
+#May need to ctrl+c - `bundle install` hangs...
+
+#Add to file ~/apps/ursa/Gemfile
+gem 'therubyracer'	#used as the Javascript engine - Google V8 engine
+gem 'devise'		#used for authentication
+gem 'unicorn'		#used as the app server
+
+#Run to install remaining gems and reconfigure
+bundle install
+
+#Run commands to generate CRUD interface
+rails generate devise:install
+rails generate devise User
+rake db:migrate
+rails generate scaffold Course ident:string name:string description:text credits:integer
+rake db:migrate
+rails generate scaffold Enrollment User:references Course:references
+rake db:migrate
+
+#Set default user page
+#Open up ~/apps/ursa/config/routes.rb
+#Add line:
+root "courses#index"
+
+#Test server
+rails s
+-Go to browser, type in <IP_ADDR>:3000 and you should see your page
+
+#Open up ~/apps/ursa/app/controllers/application_controller.rb
+#Add the following to the second line:
+	before_action :authenticate_user!
+
+#Test server again
+
+(optional) Set up Devise views for customization
+rails g devise:views
+
+create file ~/rails_apps/ursa/config/unicorn.rb
+Insert:
+	# Set the working application directory
+	# working_directory "/path/to/your/app"
+	working_directory "/home/deploy/apps/ursa"
+
+	# Unicorn PID file location
+	# pid "/path/to/pids/unicorn.pid"
+	pid "/home/deploy/apps/ursa/pids/unicorn.pid"
+
+	# Path to logs
+	# stderr_path "/path/to/log/unicorn.log"
+	# stdout_path "/path/to/log/unicorn.log"
+	stderr_path "/home/deploy/apps/ursa/log/unicorn.log"
+	stdout_path "/home/deploy/apps/ursa/log/unicorn.log"
+
+	# Unicorn socket
+	# listen "/tmp/unicorn.[app name].sock"
+	listen "/tmp/unicorn.ursa.sock"
+
+	# Number of processes
+	# worker_processes 4
+	worker_processes 2
+
+	# Time-out
+	timeout 30
+	
+#Test unicorn_rails
+cd ~/apps/ursa/
+mkdir pids
+#Test unicorn for errors
+unicorn
+
+#Start Unicorn as a daemon
+cd /home/deploy/apps/ursa && unicorn -c /home/deploy/apps/ursa/config/unicorn.rb -D
+
+#Show Nginx basic page
+
+#Remove old SSL certs
+sudo rm -rf /etc/nginx/ssl
+#Set up Nginx SSL
+sudo mkdir /etc/nginx/ssl
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
+
+cd /etc/nginx/sites-available
+sudo vim default
+#Enter in the following (between the server{  } block):
+	listen 443 ssl;
+	ssl_certificate /etc/nginx/ssl/nginx.crt;
+	ssl_certificate_key /etc/nginx/ssl/nginx.key;
+sudo service nginx restart
+#Visit https://<IP_ADDR> to verify it's working
+	
+	
+cd /etc/nginx/sites-enabled
+sudo rm default
+sudo ln -s /etc/nginx/sites-available/force_ssl ssl
+sudo service nginx restart
+#Check web server
+
+cd /etc/nginx/sites-enabled
+sudo rm ssl
+sudo ln -s /etc/nginx/sites-available/unicorn_ssl ssl
+sudo service nginx restart
+#Check web server
+
+
+
+
+

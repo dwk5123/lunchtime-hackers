@@ -1,0 +1,72 @@
+/*/////////////////////////////////////////////////////////////////////////////
+
+								Team Standing
+
+On one Sunday afternoon a Steelers fan and a Patriots fan got into a heated
+debate of whose team would win should they ever play.  However, since the teams
+never meet in the regular season, one of them had the bright idea to look at 
+opponents the two teams had in common.  
+
+They concluded that if teamA beat teamB, and teamB beat teamC, then teamA beat
+teamC indirectly.  This sort of logic can get complicated quickly so that's 
+where you come in.  Design a program that can determine the following cases:
+
+(a) one team has defeated the other directly
+(b) one team has defeated the other indirectly, meaning that it has defeated a 
+	team that has defeated the other, or that it has defeated a team that has 
+	defeated a team that has defeated the other, etc. 
+(c) each team has defeated the other indirectly 
+(d) neither team has defeated the other either directly nor indirectly.
+
+There are no ties and no two teams play each other more than once.
+
+--Sample Case--
+INPUT:
+16
+Ravens 16 Bengals 23
+Steelers 6 Ravens 26
+Browns 21 Ravens 23
+Steelers 30 Browns 27
+Colts 34 Steelers 51
+Bengals 0 Colts 27
+Texans 28 Colts 33
+Steelers 30 Texans 23
+Titans 7 Bengals 33
+Titans 17 Colts 41
+Browns 29 Titans 28
+Texans 30 Titans 16
+Jaguars 17 Colts 44
+Jaguars 9 Steelers 17
+Titans 16 Jaguars 14
+Patriots 43 Bengals 17
+11
+Titans Ravens
+Browns Bengals
+Jaguars Steelers
+Steelers Patriots
+Browns Ravens
+Colts Ravens
+Colts Browns
+Browns Colts
+Steelers Steelers
+Steelers Colts
+Browns Jaguars
+
+
+OUTPUT:
+Ravens defeated Titans indirectly
+Bengals defeated Browns indirectly
+Steelers defeated Jaguars
+Patriots defeated Steelers indirectly
+Ravens defeated Browns
+Colts and Ravens defeated each other indirectly
+Colts defeated Browns indirectly
+Colts defeated Browns indirectly
+Steelers and Steelers defeated each other indirectly
+Steelers defeated Colts
+Browns defeated Jaguars indirectly
+
+Your source code for this problem should be in one file, and should be
+named TeamStanding.cpp (or whatever extension your language uses i.e. .java, .c, etc.)
+The input will be entered through standard in. Not command line params.
+*//////////////////////////////////////////////////////////////////////////////

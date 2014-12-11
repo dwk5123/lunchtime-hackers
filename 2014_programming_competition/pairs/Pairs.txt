@@ -1,0 +1,40 @@
+/*/////////////////////////////////////////////////////////////////////////////
+A store manager is bulk ordering cups and lids from different companies based 
+on what sales are going on. (And all word problems for programming competitions
+have bizarre scenarios)
+
+The cup manufacturer being used for this order only sells cups in packs of
+52, and the lid manufacturer for this purchase only sells lids in packs of
+102. What are the three smallest order of cups the manager will have to
+purchase if she doesn't want to have any extra lids or cups?
+
+Make sure that your program can be re-used every time she runs out of cups
+because she often switches companies, which means different sized packages.
+
+Hint: the program should work if she expands her business (read: requires
+larger amounts of cups)
+
+--Sample Case 1--
+INPUT:
+52
+102
+
+OUTPUT:
+2652
+5304
+7956
+
+--Sample Case 2--
+INPUT:
+4
+9
+
+OUTPUT:
+36
+72
+108
+
+Your source code for this problem should be in one file, and should be
+named pairs.cpp (or whatever extension your language uses i.e. .java, .c, etc.)
+The input will be entered through standard in. Not command line params.
+*//////////////////////////////////////////////////////////////////////////////
